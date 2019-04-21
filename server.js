@@ -8,7 +8,9 @@ console.log("Created Bot")
 bot.start((ctx) => ctx.reply('Welcome!'))
 bot.help((ctx) => ctx.reply('Send me a sticker'))
 bot.on('sticker', (ctx) => ctx.reply('👍'))
-bot.hears('hi', (ctx) => ctx.reply('Hey there'))
+bot.hears('hi', function(ctx) { 
+    ctx.reply('Hey there');
+    console.log("received hi") })
 bot.launch()
 
 /*bot.launch({
