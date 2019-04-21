@@ -11,12 +11,13 @@ bot.on('sticker', (ctx) => ctx.reply('👍'))
 bot.hears('hi', function(ctx) { 
     ctx.reply('Hey there');
     console.log("received hi") })
-bot.launch()
 
-/*bot.launch({
+//bot.launch()
+
+bot.launch({
     webhook: {
-      domain: 'https://127.0.0.1',
+      domain: 'https://fortunebot.azurewebsites.net',
       port: 3000
   }
-})*/
+})
 
