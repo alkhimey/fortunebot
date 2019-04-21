@@ -6,8 +6,7 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "dotenv": "^7.0.0",
-    "telegraf": "^3.29.0"
+    "telegraf": "^3.29.0",
   },
   "devDependencies": {
     "mocha": "^6.1.4",
