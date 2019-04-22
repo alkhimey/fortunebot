@@ -22,15 +22,15 @@ console.log("Total fortunes in DB: " + fortunes.length)
 
 const Telegraf = require('telegraf')
 const bot = new Telegraf(process.env.BOT_TOKEN)
-//const bot = new Telegraf("880639911:AAF9e-hBEsTwdHhRrtRj93rshpix1bZ9WE0") // TODO: Hide token and revoke it
 
-bot.start((ctx) => ctx.reply('Welcome! Send me any message and I will reply with a random epigram.'))
-bot.help((ctx) => ctx.reply('Send me any message and I will reply with a random epigram.'))
-bot.command('about', (ctx) => ctx.reply('fortune@nihamkin.com\n ' + fortunes.length + " fortunes and counting"))
+bot.start((ctx) => ctx.reply('Welcome! Send me any /fortune command and I will reply with a random epigram.'))
+bot.help((ctx) => ctx.reply('Send me a /fortune command and I will reply with a random epigram.'))
+bot.command('about', (ctx) => ctx.reply('fortune@nihamkin.com\n ' + fortunes.length + " fortunes in db"))
+bot.command('fortune', (ctx) => ctx.reply(getFortune()))
 
-bot.on('message', (ctx) => {
+/*bot.on('message', (ctx) => {
     return ctx.reply(getFortune())
-})
+})*/
 
 /*
 bot.on('sticker', (ctx) => ctx.reply('👍'))
