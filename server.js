@@ -27,9 +27,9 @@ const bot = new Telegraf("880639911:AAF9e-hBEsTwdHhRrtRj93rshpix1bZ9WE0") // TOD
 bot.start((ctx) => ctx.reply('Welcome! Send me any message and I will reply with a random epigram.'))
 bot.help((ctx) => ctx.reply('Send me any message and I will reply with a random epigram.'))
 
-/*bot.on('message', (ctx) => {
-    return ctx.reply(getFortune())
-})*/
+bot.on('message', (ctx) => {
+    return ctx.reply("getFortune()")
+})
 
 /*
 bot.on('sticker', (ctx) => ctx.reply('👍'))
