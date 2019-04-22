@@ -26,6 +26,7 @@ const bot = new Telegraf("880639911:AAF9e-hBEsTwdHhRrtRj93rshpix1bZ9WE0") // TOD
 
 bot.start((ctx) => ctx.reply('Welcome! Send me any message and I will reply with a random epigram.'))
 bot.help((ctx) => ctx.reply('Send me any message and I will reply with a random epigram.'))
+bot.command('about', (ctx) => ctx.reply('Total fortunes: ' + fortunes.length + ".\n For comments, contact fortune@nihamkin.com"))
 
 bot.on('message', (ctx) => {
     return ctx.reply(getFortune())
