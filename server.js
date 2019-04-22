@@ -17,7 +17,7 @@ bot.hears('hi', function(ctx) {
 bot.launch({
     webhook: {
       domain: 'https://fortunebot.azurewebsites.net',
-      port: 3000
+      port: process.env.PORT || 3000
   }
 })
 
