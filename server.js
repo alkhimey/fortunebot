@@ -8,7 +8,7 @@ var endOfLine = require('os').EOL;
  * @returns an array of all fortune strings
  */
 function loadFortuneDB() {
-    return fs.readFileSync('fortunes', 'utf8').split('%'+endOfLine).filter(x => x) // TODO: Handle error?
+    return fs.readFileSync('fortunes/ubuntu_fortunes', 'utf8').split('%'+endOfLine).filter(x => x) // TODO: Handle error?
 }
 
 function getFortune() {
