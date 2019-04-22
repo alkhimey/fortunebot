@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+var endOfLine = require('os').EOL;
 
 /**
  * Loads the fortune strings into an in-memory db
  * @returns an array of all fortune strings
  */
 function loadFortuneDB() {
-    return fs.readFileSync('fortunes', 'utf8').split('%\n').filter(x => x)
+    return fs.readFileSync('fortunes', 'utf8').split('%'+endOfLine).filter(x => x)
 }
 
 var fortunes = loadFortuneDB();
@@ -22,14 +23,13 @@ console.log("Created Bot")
 bot.start((ctx) => ctx.reply('Welcome!'))
 bot.help((ctx) => ctx.reply('Send me a sticker'))
 bot.on('sticker', (ctx) => ctx.reply('👍'))
-
 bot.hears('hi', (ctx) => ctx.reply('I have ' + fortunes.length + " fortunes to tell you."))
 
-
+/*
 bot.launch({
     webhook: {
       domain: 'https://fortunebot.azurewebsites.net',
       port: process.env.PORT || 3000
   }
 })
-
+*/
