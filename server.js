@@ -28,7 +28,7 @@ bot.start((ctx) => ctx.reply('Welcome! Send me any message and I will reply with
 bot.help((ctx) => ctx.reply('Send me any message and I will reply with a random epigram.'))
 
 bot.on('message', (ctx) => {
-    return ctx.reply("getFortune()")
+    return ctx.reply(getFortune())
 })
 
 /*
