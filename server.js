@@ -10,6 +10,12 @@
  * http://fortunes.cat-v.org/
  * https://svnweb.freebsd.org/base?view=revision&revision=325828
  * https://sources.debian.org/src/fortune-mod/1:1.99.1-7/datfiles/
+ * 
+ * Commands to set with botfather:
+ * 
+ * about - display about info
+ * help - display help
+ * fortune - request a random fortune
  */
 
 
