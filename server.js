@@ -25,11 +25,11 @@ bot.help((ctx) => ctx.reply('Send me a sticker'))
 bot.on('sticker', (ctx) => ctx.reply('👍'))
 bot.hears('hi', (ctx) => ctx.reply('I have ' + fortunes.length + " fortunes to tell you."))
 
-/*
+
 bot.launch({
     webhook: {
       domain: 'https://fortunebot.azurewebsites.net',
       port: process.env.PORT || 3000
   }
 })
-*/
+
