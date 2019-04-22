@@ -7,12 +7,12 @@ const fs = require('fs');
  * @returns an array of all fortune strings
  */
 function loadFortuneDB() {
-    return fs.readFileSync('fortunes', 'utf8').split('%\n')
+    return fs.readFileSync('fortunes', 'utf8').split('%\n').filter(x => x)
 }
 
 var fortunes = loadFortuneDB();
 
-
+console.log(fortunes.length)
 
 const Telegraf = require('telegraf')
 
@@ -23,7 +23,7 @@ bot.start((ctx) => ctx.reply('Welcome!'))
 bot.help((ctx) => ctx.reply('Send me a sticker'))
 bot.on('sticker', (ctx) => ctx.reply('👍'))
 
-bot.hears('hi', (ctx) => ctx.reply('I have ' + fortunes.length + "fortunes to tell you."))
+bot.hears('hi', (ctx) => ctx.reply('I have ' + fortunes.length + " fortunes to tell you."))
 
 
 bot.launch({
