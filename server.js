@@ -31,7 +31,6 @@ var fortunes = [];
 
 /**
  * Loads the fortune strings into an in-memory db
- * @returns an array of all fortune strings
  */
 function loadFortuneDB() {
 
