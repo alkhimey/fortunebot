@@ -53,11 +53,14 @@ console.log("Total fortunes in DB: " + fortunes.length)
 const Telegraf = require('telegraf')
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
+var util = require('util')
+
+
 bot.use((ctx, next) => {
     const start = new Date()
     return next(ctx).then(() => {
       const ms = new Date() - start
-      console.log(JSON.stringify(ctx))
+      console.log(util.inspect(ctx))
       console.log('Response time %sms', ms)
     })
 })
