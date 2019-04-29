@@ -18,8 +18,6 @@
  * fortune - request a random fortune
  */
 
-const request = require('request');
-
 const fs = require('fs');
 var endOfLine = require('os').EOL;
 
@@ -52,7 +50,7 @@ function sendToLog(logType, logEntry) {
     //console.log('Azure Log Analysis Data Collector Function received a request');
 
     // required node.js libraries
-    //var https = require('https');
+    var https = require('https');
     var crypto = require('crypto');
 
     // Azure Log Analysis credentials
@@ -81,24 +79,41 @@ function sendToLog(logType, logEntry) {
 
     //console.log('Request Headers: ' + JSON.stringify(headers));
 
-    var url = 'https://' + workspaceId + '.ods.opinsights.azure.com/api/logs?api-version=' + apiVersion;
+    //var url = 'https://' + workspaceId + '.ods.opinsights.azure.com/api/logs?api-version=' + apiVersion;
 
-
-    /*var options = {
+    var options = {
         hostname: workspaceId + '.ods.opinsights.azure.com',
         port: 443,
         path: '/api/logs?api-version=' + apiVersion,
         method: 'POST',
         headers: headers
-    };*/
+    };
 
+    var req = https.request(options, function (res) {
+        console.log('STATUS: ' + res.statusCode);
+        console.log('HEADERS: ' + JSON.stringify(res.headers));
+        res.setEncoding('utf8');
+        res.on('data', function (chunk) {
+            console.log('BODY: ' + chunk);
+        });
+    });
+
+    req.on('error', function (e) {
+        console.log('problem with request: ' + e.message);
+    });
+
+    // write data to request body
+    req.write(data);
+    req.end();
+
+    /*
     request.post({ url: url, headers: headers, body: data }, function (error, response, body) {
 
         console.log('error:', error);
         console.log('statusCode:', response && response.statusCode);
         console.log('body:', body);
 
-    });
+    });*/
 };
 
 
