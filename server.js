@@ -103,8 +103,8 @@ function sendToLog(logType, logEntry) {
     });
 
     // write data to request body
+    console.log(data);
     req.write(data);
-    req.write("\n");
     req.end();
 
     /*
