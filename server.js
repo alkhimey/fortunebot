@@ -60,15 +60,27 @@ bot.use((ctx, next) => {
     const start = new Date()
     return next(ctx).then(() => {
       const ms = new Date() - start
-      console.log("\n")
-      console.log(util.inspect(ctx))
-      console.log("\n")
-      console.log(util.inspect(ctx.update.message.from))
-      console.log("\n")
-      console.log(util.inspect(ctx.update.message.chat))
-      console.log("\n")
-      console.log('Response time %sms', ms)
-      console.log("\n")
+
+      var my_json = {
+          "update type" : ctx.updateType,
+          "update sub type" : ctx.updateSubTypes,
+          "message id" : ctx.update.message.message_id,
+          "text" : ctx.update.message.text,
+          "message date" : ctx.update.message.date,
+          "from id" : ctx.update.message.from.id,
+          "from is bot" : ctx.update.message.from.is_bot,
+          "from first name" : ctx.update.message.from.first_name,
+          "from last name" : ctx.update.message.from.last_name,
+          "from username" : ctx.update.message.from.username,
+          "from language code" : ctx.update.message.from.language_code,
+          "chat id" : ctx.update.message.chat.id,
+          "chat type" : ctx.update.message.chat.type,
+          "chat title" : ctx.update.message.chat.type == "group" ? ctx.update.message.chat.title : ""
+      }
+
+      console.log("\r\n")
+      console.log(util.inspect(my_json))
+      console.log("\r\n")
     })
 })
 
