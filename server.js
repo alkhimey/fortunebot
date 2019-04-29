@@ -51,7 +51,7 @@ function sendToLog(logType, logEntry) {
     //console.log('Azure Log Analysis Data Collector Function received a request');
 
     // required node.js libraries
-    var request = require('request');
+    //var https = require('https');
     var crypto = require('crypto');
 
     // Azure Log Analysis credentials
@@ -81,6 +81,15 @@ function sendToLog(logType, logEntry) {
     //console.log('Request Headers: ' + JSON.stringify(headers));
 
     var url = 'https://' + workspaceId + '.ods.opinsights.azure.com/api/logs?api-version=' + apiVersion;
+
+
+    /*var options = {
+        hostname: workspaceId + '.ods.opinsights.azure.com',
+        port: 443,
+        path: '/api/logs?api-version=' + apiVersion,
+        method: 'POST',
+        headers: headers
+    };*/
 
     request.post({ url: url, headers: headers, body: data }, function (error, response, body) {
 
