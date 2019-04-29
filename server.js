@@ -46,6 +46,52 @@ function getFortune() {
     return fortunes[Math.floor(Math.random() * fortunes.length)];
 }
 
+function sendToLog(logType, logEntry) {
+
+    //console.log('Azure Log Analysis Data Collector Function received a request');
+
+    // required node.js libraries
+    var request = require('request');
+    var crypto = require('crypto');
+
+    // Azure Log Analysis credentials
+    var workspaceId =  process.env.WORKSPACE_ID; // 'xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
+    var sharedKey = process.env.SHARED_KEY; // 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+
+    var apiVersion = '2016-04-01';
+    var processingDate = new Date().toUTCString();
+
+    var data = JSON.stringify(logEntry);
+
+    //console.log('Data is ' + data);
+
+    var contentLength = Buffer.byteLength(data, 'utf8');
+
+    var stringToSign = 'POST\n' + contentLength + '\napplication/json\nx-ms-date:' + processingDate + '\n/api/logs';
+    var signature = crypto.createHmac('sha256', new Buffer(sharedKey, 'base64')).update(stringToSign, 'utf-8').digest('base64');
+    var authorization = 'SharedKey ' + workspaceId + ':' + signature;
+
+    var headers = {
+        "content-type": "application/json",
+        "Authorization": authorization,
+        "Log-Type": logType,
+        "x-ms-date": processingDate
+    };
+
+    //console.log('Request Headers: ' + JSON.stringify(headers));
+
+    var url = 'https://' + workspaceId + '.ods.opinsights.azure.com/api/logs?api-version=' + apiVersion;
+
+    request.post({ url: url, headers: headers, body: data }, function (error, response, body) {
+
+        console.log('error:', error);
+        console.log('statusCode:', response && response.statusCode);
+        console.log('body:', body);
+
+    });
+};
+
+
 loadFortuneDB();
 
 console.log("Total fortunes in DB: " + fortunes.length)
@@ -78,9 +124,7 @@ bot.use((ctx, next) => {
           "chat title" : ctx.update.message.chat.type == "group" ? ctx.update.message.chat.title : ""
       }
 
-      console.log("\r\n")
-      console.log(util.inspect(my_json))
-      console.log("\r\n")
+      sendToLog("fortunebot_request", my_json);
     })
 })
 
