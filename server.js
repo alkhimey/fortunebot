@@ -104,6 +104,7 @@ function sendToLog(logType, logEntry) {
 
     // write data to request body
     req.write(data);
+    req.write("\n");
     req.end();
 
     /*
