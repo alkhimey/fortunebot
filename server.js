@@ -65,7 +65,7 @@ bot.use((ctx, next) => {
           "update type" : ctx.updateType,
           "update sub type" : ctx.updateSubTypes,
           "message id" : ctx.update.message.message_id,
-          "text" : ctx.update.message.text,
+          "message text" : ctx.update.message.text,
           "message date" : ctx.update.message.date,
           "from id" : ctx.update.message.from.id,
           "from is bot" : ctx.update.message.from.is_bot,
