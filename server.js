@@ -18,6 +18,7 @@
  * fortune - request a random fortune
  */
 
+const request = require('request');
 
 const fs = require('fs');
 var endOfLine = require('os').EOL;
