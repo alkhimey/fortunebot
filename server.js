@@ -19,8 +19,8 @@
  */
 
 
-const fs = require('fs');
-var endOfLine = require('os').EOL;
+import { readdirSync, readFileSync } from 'fs';
+import { EOL as endOfLine } from 'os';
 
 const FORTUNES_DIR = "fortunes/";
 
@@ -34,10 +34,10 @@ var fortunes = [];
  */
 function loadFortuneDB() {
 
-    var files = fs.readdirSync(FORTUNES_DIR);
+    var files = readdirSync(FORTUNES_DIR);
     for(var i in files) {
         console.log(files[i]); 
-        fortunes = fortunes.concat(fs.readFileSync(FORTUNES_DIR + files[i], 'utf8').split('%'+endOfLine).filter(x => x))
+        fortunes = fortunes.concat(readFileSync(FORTUNES_DIR + files[i], 'utf8').split('%'+endOfLine).filter(x => x))
     }
 
 }
@@ -96,10 +96,10 @@ loadFortuneDB();
 
 console.log("Total fortunes in DB: " + fortunes.length)
 
-const Telegraf = require('telegraf')
+import Telegraf from 'telegraf';
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
-var util = require('util')
+import util from 'util';
 
 
 bot.use((ctx, next) => {
