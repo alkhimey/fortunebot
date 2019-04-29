@@ -54,6 +54,15 @@ console.log("Total fortunes in DB: " + fortunes.length)
 const Telegraf = require('telegraf')
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
+bot.use((ctx, next) => {
+    const start = new Date()
+    return next(ctx).then(() => {
+      const ms = new Date() - start
+      console.log(JSON.stringify(ctx))
+      console.log('Response time %sms', ms)
+    })
+})
+
 bot.start((ctx) => ctx.reply('Welcome! Send me any /fortune command and I will reply with a random epigram.'))
 bot.help((ctx) => ctx.reply('Send me a /fortune command and I will reply with a random epigram.'))
 bot.command('about', (ctx) => ctx.reply('fortune@nihamkin.com\n ' + fortunes.length + " fortunes in db"))
