@@ -60,8 +60,15 @@ bot.use((ctx, next) => {
     const start = new Date()
     return next(ctx).then(() => {
       const ms = new Date() - start
+      console.log("\n")
       console.log(util.inspect(ctx))
+      console.log("\n")
+      console.log(util.inspect(ctx.update.message.from))
+      console.log("\n")
+      console.log(util.inspect(ctx.update.message.chat))
+      console.log("\n")
       console.log('Response time %sms', ms)
+      console.log("\n")
     })
 })
 
