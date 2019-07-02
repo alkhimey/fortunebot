@@ -125,36 +125,70 @@ var util = require('util')
 bot.use((ctx, next) => {
     const start = new Date()
     return next(ctx).then(() => {
-      const ms = new Date() - start
+        const ms = new Date() - start
 
-      if (ctx.message) {
+        if (ctx.message) {
 
-        var my_json = {
-            "update type" : ctx.updateType,
-            "update sub type" : ctx.updateSubTypes,
-            "message id" : ctx.message.message_id,
-            "message text" : ctx.message.text,
-            "message date" : ctx.message.date,
-            "from id" : ctx.message.from.id,
-            "from is bot" : ctx.message.from.is_bot,
-            "from first name" : ctx.message.from.first_name,
-            "from last name" : ctx.message.from.last_name,
-            "from username" : ctx.message.from.username,
-            "from language code" : ctx.message.from.language_code,
-            "chat id" : ctx.message.chat.id,
-            "chat type" : ctx.message.chat.type,
-            "chat title" : ctx.message.chat.type == "group" ? ctx.update.message.chat.title : ""
+            var my_json = {
+                "update type": ctx.updateType,
+                "update sub type": ctx.updateSubTypes,
+                "message id": ctx.message.message_id,
+                "message text": ctx.message.text,
+                "message date": ctx.message.date,
+                "from id": ctx.message.from.id,
+                "from is bot": ctx.message.from.is_bot,
+                "from first name": ctx.message.from.first_name,
+                "from last name": ctx.message.from.last_name,
+                "from username": ctx.message.from.username,
+                "from language code": ctx.message.from.language_code,
+                "chat id": ctx.message.chat.id,
+                "chat type": ctx.message.chat.type,
+                "chat title": ctx.message.chat.type == "group" ? ctx.update.message.chat.title : ""
+            }
+
+           
+
+        } else if (ctx.updateType == 'inline_query') {
+            var my_json = {
+                "update type": ctx.updateType,
+                "update sub type": ctx.updateSubTypes,
+                "inline query id": ctx.inline_query.id,
+                "query text": ctx.inline_query.query,
+                "from id": ctx.message.from.id,
+                "from is bot": ctx.message.from.is_bot,
+                "from first name": ctx.message.from.first_name,
+                "from last name": ctx.message.from.last_name,
+                "from username": ctx.message.from.username,
+                "from language code": ctx.message.from.language_code
+            }
+        } else if (ctx.updateType == "'chosen_inline_result'") {
+            var my_json = {
+                "update type": ctx.updateType,
+                "update sub type": ctx.updateSubTypes,
+                "update id": ctx.update.update_id,
+                "query text": ctx.update.query,
+                "result id": ctx.update.result_id,
+                "from id": ctx.message.from.id,
+                "from is bot": ctx.message.from.is_bot,
+                "from first name": ctx.message.from.first_name,
+                "from last name": ctx.message.from.last_name,
+                "from username": ctx.message.from.username,
+                "from language code": ctx.message.from.language_code
+            }
+        } else {
+            var my_json = {
+                "update type": ctx.updateType,
+                "update sub type": ctx.updateSubTypes,
+                "from id": ctx.message.from.id,
+                "from is bot": ctx.message.from.is_bot,
+                "from first name": ctx.message.from.first_name,
+                "from last name": ctx.message.from.last_name,
+                "from username": ctx.message.from.username,
+                "from language code": ctx.message.from.language_code
+            }
         }
-        
+
         sendToLog("fortunebot_request", my_json);
-
-      } else {
-          console.log("Not a message!")
-          console.log(ctx)
-      }
-
-
-      
     })
 })
 
