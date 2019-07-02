@@ -84,11 +84,11 @@ function sendToLog(logType, logEntry) {
     };
 
     var req = https.request(options, function (res) {
-        console.log('STATUS: ' + res.statusCode);
-        console.log('HEADERS: ' + JSON.stringify(res.headers));
+        //console.log('STATUS: ' + res.statusCode);
+        //console.log('HEADERS: ' + JSON.stringify(res.headers));
         res.setEncoding('utf8');
         res.on('data', function (chunk) {
-            console.log('BODY: ' + chunk);
+            //console.log('BODY: ' + chunk);
         });
     });
 
@@ -127,24 +127,33 @@ bot.use((ctx, next) => {
     return next(ctx).then(() => {
       const ms = new Date() - start
 
-      var my_json = {
-          "update type" : ctx.updateType,
-          "update sub type" : ctx.updateSubTypes,
-          "message id" : ctx.update.message.message_id,
-          "message text" : ctx.update.message.text,
-          "message date" : ctx.update.message.date,
-          "from id" : ctx.update.message.from.id,
-          "from is bot" : ctx.update.message.from.is_bot,
-          "from first name" : ctx.update.message.from.first_name,
-          "from last name" : ctx.update.message.from.last_name,
-          "from username" : ctx.update.message.from.username,
-          "from language code" : ctx.update.message.from.language_code,
-          "chat id" : ctx.update.message.chat.id,
-          "chat type" : ctx.update.message.chat.type,
-          "chat title" : ctx.update.message.chat.type == "group" ? ctx.update.message.chat.title : ""
+      if (ctx.message) {
+
+        var my_json = {
+            "update type" : ctx.updateType,
+            "update sub type" : ctx.updateSubTypes,
+            "message id" : ctx.message.message_id,
+            "message text" : ctx.message.text,
+            "message date" : ctx.message.date,
+            "from id" : ctx.message.from.id,
+            "from is bot" : ctx.message.from.is_bot,
+            "from first name" : ctx.message.from.first_name,
+            "from last name" : ctx.message.from.last_name,
+            "from username" : ctx.message.from.username,
+            "from language code" : ctx.message.from.language_code,
+            "chat id" : ctx.message.chat.id,
+            "chat type" : ctx.message.chat.type,
+            "chat title" : ctx.message.chat.type == "group" ? ctx.update.message.chat.title : ""
+        }
+        
+        sendToLog("fortunebot_request", my_json);
+
+      } else {
+          console.log("Not a message!")
       }
 
-      sendToLog("fortunebot_request", my_json);
+
+      
     })
 })
 
@@ -166,32 +175,6 @@ bot.on('inline_query', (ctx) => {
     // Using shortcut
     ctx.answerInlineQuery(result, {cache_time: 0})
 })
-
-bot.on('chosen_inline_result', (ctx) => {
-
-    console.log("Chosen inline query");
-
-
-    var my_json = {
-        "update type" : "blablalba inline result",
-        "update sub type" : ctx.updateSubTypes,
-        "message id" : ctx.update.message.message_id,
-        "message text" : ctx.update.message.text,
-        "message date" : ctx.update.message.date,
-        "from id" : ctx.update.message.from.id,
-        "from is bot" : ctx.update.message.from.is_bot,
-        "from first name" : ctx.update.message.from.first_name,
-        "from last name" : ctx.update.message.from.last_name,
-        "from username" : ctx.update.message.from.username,
-        "from language code" : ctx.update.message.from.language_code,
-        "chat id" : ctx.update.message.chat.id,
-        "chat type" : ctx.update.message.chat.type,
-        "chat title" : ctx.update.message.chat.type == "group" ? ctx.update.message.chat.title : ""
-    }
-
-    sendToLog("fortunebot_request", my_json);
-})
-
 
 bot.launch({
     webhook: {
