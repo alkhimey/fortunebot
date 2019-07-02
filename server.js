@@ -127,6 +127,11 @@ bot.use((ctx, next) => {
     return next(ctx).then(() => {
         const ms = new Date() - start
 
+
+        console.log(ctx.update)
+        console.log("\n")
+        console.log(ctx.update.from)
+
         if (ctx.message) {
 
             var my_json = {
@@ -188,9 +193,7 @@ bot.use((ctx, next) => {
             }
         }
 
-        console.log(ctx.update)
-        console.log("\n")
-        console.log(ctx.update.from)
+
 
         sendToLog("fortunebot_request", my_json);
     })
