@@ -154,12 +154,12 @@ bot.use((ctx, next) => {
                 "update sub type": ctx.updateSubTypes,
                 "inline query id": ctx.inline_query.id,
                 "query text": ctx.inline_query.query,
-                "from id": ctx.message.from.id,
-                "from is bot": ctx.message.from.is_bot,
-                "from first name": ctx.message.from.first_name,
-                "from last name": ctx.message.from.last_name,
-                "from username": ctx.message.from.username,
-                "from language code": ctx.message.from.language_code
+                "from id": ctx.inline_query.from.id,
+                "from is bot": ctx.inline_query.from.is_bot,
+                "from first name": ctx.inline_query.from.first_name,
+                "from last name": ctx.inline_query.from.last_name,
+                "from username": ctx.inline_query.from.username,
+                "from language code": ctx.inline_query.from.language_code
             }
         } else if (ctx.updateType == "'chosen_inline_result'") {
             var my_json = {
@@ -168,23 +168,23 @@ bot.use((ctx, next) => {
                 "update id": ctx.update.update_id,
                 "query text": ctx.update.query,
                 "result id": ctx.update.result_id,
-                "from id": ctx.message.from.id,
-                "from is bot": ctx.message.from.is_bot,
-                "from first name": ctx.message.from.first_name,
-                "from last name": ctx.message.from.last_name,
-                "from username": ctx.message.from.username,
-                "from language code": ctx.message.from.language_code
+                "from id": ctx.update.from.id,
+                "from is bot": ctx.update.from.is_bot,
+                "from first name": ctx.update.from.first_name,
+                "from last name": ctx.update.from.last_name,
+                "from username": ctx.update.from.username,
+                "from language code": ctx.update.from.language_code
             }
         } else {
             var my_json = {
                 "update type": ctx.updateType,
                 "update sub type": ctx.updateSubTypes,
-                "from id": ctx.message.from.id,
-                "from is bot": ctx.message.from.is_bot,
-                "from first name": ctx.message.from.first_name,
-                "from last name": ctx.message.from.last_name,
-                "from username": ctx.message.from.username,
-                "from language code": ctx.message.from.language_code
+                "from id": ctx.update.from.id,
+                "from is bot": ctx.update.from.is_bot,
+                "from first name": ctx.update.from.first_name,
+                "from last name": ctx.update.from.last_name,
+                "from username": ctx.update.from.username,
+                "from language code": ctx.update.from.language_code
             }
         }
 
