@@ -167,6 +167,32 @@ bot.on('inline_query', (ctx) => {
     ctx.answerInlineQuery(result, {cache_time: 0})
 })
 
+bot.on('chosen_inline_result', (ctx) => {
+
+    console.log("Chosen inline query");
+
+
+    var my_json = {
+        "update type" : "blablalba inline result",
+        "update sub type" : ctx.updateSubTypes,
+        "message id" : ctx.update.message.message_id,
+        "message text" : ctx.update.message.text,
+        "message date" : ctx.update.message.date,
+        "from id" : ctx.update.message.from.id,
+        "from is bot" : ctx.update.message.from.is_bot,
+        "from first name" : ctx.update.message.from.first_name,
+        "from last name" : ctx.update.message.from.last_name,
+        "from username" : ctx.update.message.from.username,
+        "from language code" : ctx.update.message.from.language_code,
+        "chat id" : ctx.update.message.chat.id,
+        "chat type" : ctx.update.message.chat.type,
+        "chat title" : ctx.update.message.chat.type == "group" ? ctx.update.message.chat.title : ""
+    }
+
+    sendToLog("fortunebot_request", my_json);
+})
+
+
 bot.launch({
     webhook: {
       domain: 'https://fortunebot.azurewebsites.net',
