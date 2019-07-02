@@ -159,6 +159,13 @@ bot.help((ctx) => ctx.reply('Send me a /fortune command and I will reply with a 
 bot.command('about', (ctx) => ctx.reply('https://github.com/alkhimey/fortunebot\n ' + fortunes.length + " fortunes in db"))
 bot.command('fortune', (ctx) => ctx.reply(getFortune()))
 
+bot.on('inline_query', (ctx) => {
+    const result = ["aaa"]
+
+    // Using shortcut
+    ctx.answerInlineQuery(result)
+})
+
 bot.launch({
     webhook: {
       domain: 'https://fortunebot.azurewebsites.net',
