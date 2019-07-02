@@ -161,8 +161,10 @@ bot.command('fortune', (ctx) => ctx.reply(getFortune()))
 
 bot.on('inline_query', (ctx) => {
     const result = [{
-        type: 'article',        
+        type: 'article',   
+        id : '1',     
         title: "title",
+        input_message_content :{message_text :'content'},
         description: "description"
       }]
 
