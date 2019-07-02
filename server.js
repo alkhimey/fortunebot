@@ -158,7 +158,7 @@ bot.on('inline_query', (ctx) => {
         type: 'article',   
         id : '1',     
         title: "Select this to send a fortune",
-        cache_time : 0,
+        cache_time : "0",
         input_message_content :{message_text : getFortune() }
         //description: "description"
       }]
