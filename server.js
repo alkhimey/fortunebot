@@ -163,9 +163,9 @@ bot.on('inline_query', (ctx) => {
     const result = [{
         type: 'article',   
         id : '1',     
-        title: "title",
-        input_message_content :{message_text :'content'},
-        description: "description"
+        title: "Select this to send a fortune",
+        input_message_content :{message_text : getFortune() }
+        //description: "description"
       }]
 
     // Using shortcut
