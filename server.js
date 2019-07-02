@@ -62,8 +62,6 @@ function sendToLog(logType, logEntry) {
 
     var data = JSON.stringify(logEntry);
 
-    //console.log('Data is ' + data);
-
     var contentLength = Buffer.byteLength(data, 'utf8');
 
     var stringToSign = 'POST\n' + contentLength + '\napplication/json\nx-ms-date:' + processingDate + '\n/api/logs';
@@ -76,10 +74,6 @@ function sendToLog(logType, logEntry) {
         "Log-Type": logType,
         "x-ms-date": processingDate
     };
-
-    //console.log('Request Headers: ' + JSON.stringify(headers));
-
-    //var url = 'https://' + workspaceId + '.ods.opinsights.azure.com/api/logs?api-version=' + apiVersion;
 
     var options = {
         hostname: workspaceId + '.ods.opinsights.azure.com',
@@ -164,6 +158,7 @@ bot.on('inline_query', (ctx) => {
         type: 'article',   
         id : '1',     
         title: "Select this to send a fortune",
+        cache_time : 0,
         input_message_content :{message_text : getFortune() }
         //description: "description"
       }]
