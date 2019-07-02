@@ -127,11 +127,6 @@ bot.use((ctx, next) => {
     return next(ctx).then(() => {
         const ms = new Date() - start
 
-
-        console.log(ctx.update)
-        console.log("\n")
-
-
         if (ctx.message) {
 
             var my_json = {
@@ -150,9 +145,6 @@ bot.use((ctx, next) => {
                 "chat type": ctx.message.chat.type,
                 "chat title": ctx.message.chat.type == "group" ? ctx.update.message.chat.title : ""
             }
-
-           
-
         } else if (ctx.updateType == 'inline_query') {
             var my_json = {
                 "update type": ctx.updateType,
@@ -187,8 +179,6 @@ bot.use((ctx, next) => {
                 "update sub type": ctx.updateSubTypes,
             }
         }
-
-
 
         sendToLog("fortunebot_request", my_json);
     })
