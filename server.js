@@ -160,7 +160,11 @@ bot.command('about', (ctx) => ctx.reply('https://github.com/alkhimey/fortunebot\
 bot.command('fortune', (ctx) => ctx.reply(getFortune()))
 
 bot.on('inline_query', (ctx) => {
-    const result = ["aaa"]
+    const result = [{
+        type: 'article',        
+        title: "title",
+        description: "description"
+      }]
 
     // Using shortcut
     ctx.answerInlineQuery(result)
