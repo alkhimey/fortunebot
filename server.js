@@ -188,6 +188,10 @@ bot.use((ctx, next) => {
             }
         }
 
+        console.log(ctx.update)
+        console.log("\n")
+        console.log(ctx.update.from)
+
         sendToLog("fortunebot_request", my_json);
     })
 })
