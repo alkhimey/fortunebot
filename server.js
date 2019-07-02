@@ -150,6 +150,7 @@ bot.use((ctx, next) => {
 
       } else {
           console.log("Not a message!")
+          console.log(ctx)
       }
 
 
