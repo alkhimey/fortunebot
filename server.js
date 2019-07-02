@@ -130,7 +130,7 @@ bot.use((ctx, next) => {
 
         console.log(ctx.update)
         console.log("\n")
-        console.log(ctx.update.from)
+        console.log(ctx.update.inline_query.from)
 
         if (ctx.message) {
 
@@ -157,14 +157,15 @@ bot.use((ctx, next) => {
             var my_json = {
                 "update type": ctx.updateType,
                 "update sub type": ctx.updateSubTypes,
-                "inline query id": ctx.inline_query.id,
-                "query text": ctx.inline_query.query,
-                "from id": ctx.inline_query.from.id,
-                "from is bot": ctx.inline_query.from.is_bot,
-                "from first name": ctx.inline_query.from.first_name,
-                "from last name": ctx.inline_query.from.last_name,
-                "from username": ctx.inline_query.from.username,
-                "from language code": ctx.inline_query.from.language_code
+                "update id" : ctx.update.update_id,
+                "inline query id": ctx.update.inline_query.id,
+                "query text": ctx.update.inline_query.query,
+                "from id": ctx.update.inline_query.from.id,
+                "from is bot": ctx.update.inline_query.from.is_bot,
+                "from first name": ctx.update.inline_query.from.first_name,
+                "from last name": ctx.update.inline_query.from.last_name,
+                "from username": ctx.update.inline_query.from.username,
+                "from language code": ctx.update.inline_query.from.language_code
             }
         } else if (ctx.updateType == "'chosen_inline_result'") {
             var my_json = {
