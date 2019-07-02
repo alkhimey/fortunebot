@@ -159,7 +159,6 @@ bot.on('inline_query', (ctx) => {
         id : '1',     
         title: "Select this to send a fortune",
         thumb_url: "https://github.com/alkhimey/fortunebot/raw/master/images/cowsay.png",
-        hide_url: "True",
         input_message_content :{message_text : getFortune() }
         //description: "description"
       }]
