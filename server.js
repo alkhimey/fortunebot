@@ -50,8 +50,8 @@ function sendToLog(logEntry) {
     // const connectionString = process.env.ANALYTICS_CONNECTION_STRING;
     // const storageClient = storage.createTableService(connectionString);
 
-    import { TableClient } from '@azure/data-tables'
-
+    //import { TableClient } from '@azure/data-tables'
+    const { TableClient } = require('@azure/data-tables');
 
     const client = TableClient.fromConnectionString(
       process.env.ANALYTICS_CONNECTION_STRING,
