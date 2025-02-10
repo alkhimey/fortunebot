@@ -56,28 +56,28 @@ function sendToLog(logEntry) {
     );
 
     // Check if the table exists before creating it
-    client.getTableAccessPolicies()
-        .then(() => {
-            // Table exists, proceed to upsert entity
-            return client.upsertEntity(logEntry, 'Replace');
-        })
-        .catch((error) => {
-            // Table does not exist, create it
-            if (error.statusCode === 404) {
-                return client.createTable()
-                    .then(() => client.upsertEntity(logEntry, 'Replace'));
-            } else {
-                // Handle other errors
-                throw error;
-            }
-        })
-        .then(() => {
-            console.log('Log entry sent successfully');
-        })
-        .catch((error) => {
-            console.error('Error sending log entry:', error);
-            // Handle the error appropriately (e.g., retry, log, notify)
-        });
+    // client.getTableAccessPolicies()
+    //     .then(() => {
+    //         // Table exists, proceed to upsert entity
+    //         return client.upsertEntity(logEntry, 'Replace');
+    //     })
+    //     .catch((error) => {
+    //         // Table does not exist, create it
+    //         if (error.statusCode === 404) {
+    //             return client.createTable()
+    //                 .then(() => client.upsertEntity(logEntry, 'Replace'));
+    //         } else {
+    //             // Handle other errors
+    //             throw error;
+    //         }
+    //     })
+    //     .then(() => {
+    //         console.log('Log entry sent successfully');
+    //     })
+    //     .catch((error) => {
+    //         console.error('Error sending log entry:', error);
+    //         // Handle the error appropriately (e.g., retry, log, notify)
+    //     });
 }
 
 
@@ -216,7 +216,8 @@ bot.use((ctx, next) => {
             }
         }
 
-        sendToLog("fortunebot_request", my_json);
+        // sendToLog("fortunebot_request", my_json);
+        sendToLog(my_json);
     })
 })
 
