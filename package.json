@@ -11,6 +11,8 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "@azure/cosmos": "^4.2.0",
+    "@azure/identity": "^4.6.0",
     "telegraf": "^3.29.0"
   }
 }

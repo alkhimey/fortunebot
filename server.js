@@ -45,71 +45,93 @@ function getFortune() {
     return fortunes[Math.floor(Math.random() * fortunes.length)];
 }
 
-function sendToLog(logType, logEntry) {
+function sendToLog(logEntry) {
+    // const storage = require('azure-storage');
+    // const connectionString = process.env.ANALYTICS_CONNECTION_STRING;
+    // const storageClient = storage.createTableService(connectionString);
 
-    //console.log('Azure Log Analysis Data Collector Function received a request');
+    import { TableClient } from '@azure/data-tables'
 
-    // required node.js libraries
-    var https = require('https');
-    var crypto = require('crypto');
 
-    // Azure Log Analysis credentials
-    var workspaceId =  process.env.WORKSPACE_ID; // 'xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
-    var sharedKey = process.env.SHARED_KEY; // 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+    const client = TableClient.fromConnectionString(
+      process.env.ANALYTICS_CONNECTION_STRING,
+      'fortunebot-analytics'
+    )
 
-    var apiVersion = '2016-04-01';
-    var processingDate = new Date().toUTCString();
+    await client.createTable()
 
-    var data = JSON.stringify(logEntry);
+    await client.upsertEntity(
+     logEntry,
+    'Replace'
+    )
+}
 
-    var contentLength = Buffer.byteLength(data, 'utf8');
 
-    var stringToSign = 'POST\n' + contentLength + '\napplication/json\nx-ms-date:' + processingDate + '\n/api/logs';
-    var signature = crypto.createHmac('sha256', new Buffer(sharedKey, 'base64')).update(stringToSign, 'utf-8').digest('base64');
-    var authorization = 'SharedKey ' + workspaceId + ':' + signature;
+// function sendToLog(logType, logEntry) {
 
-    var headers = {
-        "content-type": "application/json",
-        "Authorization": authorization,
-        "Log-Type": logType,
-        "x-ms-date": processingDate
-    };
+//     //console.log('Azure Log Analysis Data Collector Function received a request');
 
-    var options = {
-        hostname: workspaceId + '.ods.opinsights.azure.com',
-        port: 443,
-        path: '/api/logs?api-version=' + apiVersion,
-        method: 'POST',
-        headers: headers
-    };
+//     // required node.js libraries
+//     var https = require('https');
+//     var crypto = require('crypto');
 
-    var req = https.request(options, function (res) {
-        //console.log('STATUS: ' + res.statusCode);
-        //console.log('HEADERS: ' + JSON.stringify(res.headers));
-        res.setEncoding('utf8');
-        res.on('data', function (chunk) {
-            //console.log('BODY: ' + chunk);
-        });
-    });
+//     // Azure Log Analysis credentials
+//     var workspaceId =  process.env.WORKSPACE_ID; // 'xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
+//     var sharedKey = process.env.SHARED_KEY; // 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 
-    req.on('error', function (e) {
-        console.log('problem with request: ' + e.message);
-    });
+//     var apiVersion = '2016-04-01';
+//     var processingDate = new Date().toUTCString();
 
-    // write data to request body
-    console.log(data);
-    req.write(data);
-    req.end();
+//     var data = JSON.stringify(logEntry);
 
-    /*
-    request.post({ url: url, headers: headers, body: data }, function (error, response, body) {
+//     var contentLength = Buffer.byteLength(data, 'utf8');
 
-        console.log('error:', error);
-        console.log('statusCode:', response && response.statusCode);
-        console.log('body:', body);
+//     var stringToSign = 'POST\n' + contentLength + '\napplication/json\nx-ms-date:' + processingDate + '\n/api/logs';
+//     var signature = crypto.createHmac('sha256', new Buffer(sharedKey, 'base64')).update(stringToSign, 'utf-8').digest('base64');
+//     var authorization = 'SharedKey ' + workspaceId + ':' + signature;
 
-    });*/
-};
+//     var headers = {
+//         "content-type": "application/json",
+//         "Authorization": authorization,
+//         "Log-Type": logType,
+//         "x-ms-date": processingDate
+//     };
+
+//     var options = {
+//         hostname: workspaceId + '.ods.opinsights.azure.com',
+//         port: 443,
+//         path: '/api/logs?api-version=' + apiVersion,
+//         method: 'POST',
+//         headers: headers
+//     };
+
+//     var req = https.request(options, function (res) {
+//         //console.log('STATUS: ' + res.statusCode);
+//         //console.log('HEADERS: ' + JSON.stringify(res.headers));
+//         res.setEncoding('utf8');
+//         res.on('data', function (chunk) {
+//             //console.log('BODY: ' + chunk);
+//         });
+//     });
+
+//     req.on('error', function (e) {
+//         console.log('problem with request: ' + e.message);
+//     });
+
+//     // write data to request body
+//     console.log(data);
+//     req.write(data);
+//     req.end();
+
+//     /*
+//     request.post({ url: url, headers: headers, body: data }, function (error, response, body) {
+
+//         console.log('error:', error);
+//         console.log('statusCode:', response && response.statusCode);
+//         console.log('body:', body);
+
+//     });*/
+// };
 
 
 loadFortuneDB();
