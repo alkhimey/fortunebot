@@ -18,9 +18,11 @@
  * fortune - request a random fortune
  */
 
+console.log("Started script")
 
 const { TableClient } = require('@azure/data-tables');
 
+console.log("Imported package")
 
 const fs = require('fs');
 var endOfLine = require('os').EOL;
@@ -50,6 +52,7 @@ function getFortune() {
 }
 
 function sendToLog(logEntry) {
+    console.log("Entered logEntry")
     const client = TableClient.fromConnectionString(
         process.env.ANALYTICS_CONNECTION_STRING,
         'fortunebot-analytics'
