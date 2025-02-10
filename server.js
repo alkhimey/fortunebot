@@ -18,177 +18,162 @@
  * fortune - request a random fortune
  */
 
+console.log("Started script")
+
+const { Telegraf } = require('telegraf')
 const fs = require('fs');
-var endOfLine = require('os').EOL;
+const express = require('express')
+const { TableClient } = require('@azure/data-tables');
 
 const FORTUNES_DIR = "fortunes/";
 
 /**
- * Global variable holding the db of all the fortunes
+ * Global vars
  */
 var fortunes = [];
 
 /**
- * Loads the fortune strings into an in-memory db
+ * Functions
  */
 function loadFortuneDB() {
 
     var files = fs.readdirSync(FORTUNES_DIR);
     for(var i in files) {
-        console.log(files[i]); 
-        fortunes = fortunes.concat(fs.readFileSync(FORTUNES_DIR + files[i], 'utf8').split('%'+endOfLine).filter(x => x))
+        var contents = fs.readFileSync(FORTUNES_DIR + files[i], 'utf8')
+            .split(/%\r?\n/)
+            // .filter(x => x)
+        console.log(`Loading ${contents.length} from ${files[i]}`);
+
+
+        fortunes = fortunes.concat(contents)
     }
 
 }
 
 function getFortune() {
+    console.log("getFortune")
     return fortunes[Math.floor(Math.random() * fortunes.length)];
 }
 
-function sendToLog(logType, logEntry) {
+function sendToLog(logEntry) {
+    console.log("Entered logEntry")
+    const client = TableClient.fromConnectionString(
+        process.env.ANALYTICS_CONNECTION_STRING,
+        'fortunebot-analytics'
+    );
 
-    //console.log('Azure Log Analysis Data Collector Function received a request');
+    console.log(">1")
+    console.log(logEntry)
+    for (let key in logEntry) {
+        if (logEntry.hasOwnProperty(key)) {
+            logEntry[key] = String(logEntry[key]);
+        }
+    }
+    console.log(">2")
+    console.log(logEntry)
+    console.log(">3")
 
-    // required node.js libraries
-    var https = require('https');
-    var crypto = require('crypto');
 
-    // Azure Log Analysis credentials
-    var workspaceId =  process.env.WORKSPACE_ID; // 'xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
-    var sharedKey = process.env.SHARED_KEY; // 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
-
-    var apiVersion = '2016-04-01';
-    var processingDate = new Date().toUTCString();
-
-    var data = JSON.stringify(logEntry);
-
-    var contentLength = Buffer.byteLength(data, 'utf8');
-
-    var stringToSign = 'POST\n' + contentLength + '\napplication/json\nx-ms-date:' + processingDate + '\n/api/logs';
-    var signature = crypto.createHmac('sha256', new Buffer(sharedKey, 'base64')).update(stringToSign, 'utf-8').digest('base64');
-    var authorization = 'SharedKey ' + workspaceId + ':' + signature;
-
-    var headers = {
-        "content-type": "application/json",
-        "Authorization": authorization,
-        "Log-Type": logType,
-        "x-ms-date": processingDate
-    };
-
-    var options = {
-        hostname: workspaceId + '.ods.opinsights.azure.com',
-        port: 443,
-        path: '/api/logs?api-version=' + apiVersion,
-        method: 'POST',
-        headers: headers
-    };
-
-    var req = https.request(options, function (res) {
-        //console.log('STATUS: ' + res.statusCode);
-        //console.log('HEADERS: ' + JSON.stringify(res.headers));
-        res.setEncoding('utf8');
-        res.on('data', function (chunk) {
-            //console.log('BODY: ' + chunk);
+    client.upsertEntity(logEntry)
+        .then(() => {
+            console.log('Log entry sent successfully');
+        })
+        .catch((error) => {
+            console.error('Error sending log entry:', error);
         });
-    });
-
-    req.on('error', function (e) {
-        console.log('problem with request: ' + e.message);
-    });
-
-    // write data to request body
-    console.log(data);
-    req.write(data);
-    req.end();
-
-    /*
-    request.post({ url: url, headers: headers, body: data }, function (error, response, body) {
-
-        console.log('error:', error);
-        console.log('statusCode:', response && response.statusCode);
-        console.log('body:', body);
-
-    });*/
-};
+}
 
 
-loadFortuneDB();
+/**
+ * Load the fortunes to memory
+ */
+loadFortuneDB()
+console.log(`${fortunes.length} fortunes are loaded`)
 
-console.log("Total fortunes in DB: " + fortunes.length)
+/**
+ * Create simple web service for debugging
+ */
+// const app = express()
+// const port = process.env.PORT
 
-const Telegraf = require('telegraf')
+// app.get('/', (req, res) => {
+//   res.send(`${fortunes.length} fortunes are loaded`)
+// })
+
+// app.listen(port, () => {
+//   console.log(`Example app listening on port ${port}`)
+// })
+
+
+/**
+ * Create the telegram bot
+ */
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
-var util = require('util')
-
-
 bot.use((ctx, next) => {
-    const start = new Date()
     return next(ctx).then(() => {
-        const ms = new Date() - start
-
         if (ctx.message) {
-
-            var my_json = {
-                "update type": ctx.updateType,
-                "update sub type": ctx.updateSubTypes,
-                "message id": ctx.message.message_id,
-                "message text": ctx.message.text,
-                "message date": ctx.message.date,
-                "from id": ctx.message.from.id,
-                "from is bot": ctx.message.from.is_bot,
-                "from first name": ctx.message.from.first_name,
-                "from last name": ctx.message.from.last_name,
-                "from username": ctx.message.from.username,
-                "from language code": ctx.message.from.language_code,
-                "chat id": ctx.message.chat.id,
-                "chat type": ctx.message.chat.type,
-                "chat title": ctx.message.chat.type == "group" ? ctx.update.message.chat.title : ""
+            var logEntry = {
+                "updateType": ctx.updateType,
+                "updateSubType": ctx.updateSubTypes,
+                "messageId": ctx.message.message_id,
+                "messageText": ctx.message.text,
+                "messageDate": ctx.message.date,
+                "fromId": ctx.message.from.id,
+                "fromIsBot": ctx.message.from.is_bot,
+                "fromFirstName": ctx.message.from.first_name,
+                "fromLastName": ctx.message.from.last_name,
+                "fromUsername": ctx.message.from.username,
+                "fromLanguageCode": ctx.message.from.language_code,
+                "chatId": ctx.message.chat.id,
+                "chatType": ctx.message.chat.type,
+                "chatTitle": ctx.message.chat.type === "group" ? ctx.update.message.chat.title : ""
             }
         } else if (ctx.updateType == 'inline_query') {
-            var my_json = {
-                "update type": ctx.updateType,
-                "update sub type": ctx.updateSubTypes,
-                "update id" : ctx.update.update_id,
-                "inline query id": ctx.update.inline_query.id,
-                "query text": ctx.update.inline_query.query,
-                "from id": ctx.update.inline_query.from.id,
-                "from is bot": ctx.update.inline_query.from.is_bot,
-                "from first name": ctx.update.inline_query.from.first_name,
-                "from last name": ctx.update.inline_query.from.last_name,
-                "from username": ctx.update.inline_query.from.username,
-                "from language code": ctx.update.inline_query.from.language_code
+            var logEntry = {
+                "updateType": ctx.updateType,
+                "updateSubType": ctx.updateSubTypes,
+                "updateId": ctx.update.update_id,
+                "inlineQueryId": ctx.update.inline_query.id,
+                "queryText": ctx.update.inline_query.query,
+                "fromId": ctx.update.inline_query.from.id,
+                "fromIsBot": ctx.update.inline_query.from.is_bot,
+                "fromFirstName": ctx.update.inline_query.from.first_name,
+                "fromLastName": ctx.update.inline_query.from.last_name,
+                "fromUsername": ctx.update.inline_query.from.username,
+                "fromLanguageCode": ctx.update.inline_query.from.language_code
             }
         } else if (ctx.updateType == "'chosen_inline_result'") {
-            var my_json = {
-                "update type":        ctx.updateType,
-                "update sub type":    ctx.updateSubTypes,
-                "update id":          ctx.update.update_id,
-                "query text":         ctx.update.chosen_inline_result.query,
-                "result id":          ctx.update.chosen_inline_result.result_id,
-                "from id":            ctx.update.chosen_inline_result.from.id,
-                "from is bot":        ctx.update.chosen_inline_result.from.is_bot,
-                "from first name":    ctx.update.chosen_inline_result.from.first_name,
-                "from last name":     ctx.update.chosen_inline_result.from.last_name,
-                "from username":      ctx.update.chosen_inline_result.from.username,
-                "from language code": ctx.update.chosen_inline_result.from.language_code
+            var logEntry = {
+                "updateType": ctx.updateType,
+                "updateSubType": ctx.updateSubTypes,
+                "updateId": ctx.update.update_id,
+                "queryText": ctx.update.chosen_inline_result.query,
+                "resultId": ctx.update.chosen_inline_result.result_id,
+                "fromId": ctx.update.chosen_inline_result.from.id,
+                "fromIsBot": ctx.update.chosen_inline_result.from.is_bot,
+                "fromFirstName": ctx.update.chosen_inline_result.from.first_name,
+                "fromLastName": ctx.update.chosen_inline_result.from.last_name,
+                "fromUsername": ctx.update.chosen_inline_result.from.username,
+                "fromLanguageCode": ctx.update.chosen_inline_result.from.language_code
             }
         } else {
-            var my_json = {
-                "update type": ctx.updateType,
-                "update sub type": ctx.updateSubTypes,
+            var logEntry = {
+                "updateType": ctx.updateType,
+                "updateSubType": ctx.updateSubTypes,
             }
         }
 
-        sendToLog("fortunebot_request", my_json);
+        logEntry["partitionKey"] = ctx.updateType
+        logEntry["rowKey"] = "id" + Math.random().toString(16).slice(2)
+
+        sendToLog(logEntry);
     })
 })
-
 bot.start((ctx) => ctx.reply('Welcome! Send me any /fortune command and I will reply with a random epigram.'))
 bot.help((ctx) => ctx.reply('Send me a /fortune command and I will reply with a random epigram.'))
 bot.command('about', (ctx) => ctx.reply('https://github.com/alkhimey/fortunebot\n ' + fortunes.length + " fortunes in db"))
 bot.command('fortune', (ctx) => ctx.reply(getFortune()))
-
 bot.on('inline_query', (ctx) => {
     const result = [{
         type: 'article',   
@@ -210,3 +195,6 @@ bot.launch({
   }
 })
 
+// Enable graceful stop
+process.once('SIGINT', () => bot.stop('SIGINT'))
+process.once('SIGTERM', () => bot.stop('SIGTERM'))
