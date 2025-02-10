@@ -18,6 +18,10 @@
  * fortune - request a random fortune
  */
 
+
+const { TableClient } = require('@azure/data-tables');
+
+
 const fs = require('fs');
 var endOfLine = require('os').EOL;
 
@@ -46,24 +50,34 @@ function getFortune() {
 }
 
 function sendToLog(logEntry) {
-    // const storage = require('azure-storage');
-    // const connectionString = process.env.ANALYTICS_CONNECTION_STRING;
-    // const storageClient = storage.createTableService(connectionString);
-
-    //import { TableClient } from '@azure/data-tables'
-    const { TableClient } = require('@azure/data-tables');
-
     const client = TableClient.fromConnectionString(
-      process.env.ANALYTICS_CONNECTION_STRING,
-      'fortunebot-analytics'
-    )
+        process.env.ANALYTICS_CONNECTION_STRING,
+        'fortunebot-analytics'
+    );
 
-    await client.createTable()
-
-    await client.upsertEntity(
-     logEntry,
-    'Replace'
-    )
+    // Check if the table exists before creating it
+    client.getTableAccessPolicies()
+        .then(() => {
+            // Table exists, proceed to upsert entity
+            return client.upsertEntity(logEntry, 'Replace');
+        })
+        .catch((error) => {
+            // Table does not exist, create it
+            if (error.statusCode === 404) {
+                return client.createTable()
+                    .then(() => client.upsertEntity(logEntry, 'Replace'));
+            } else {
+                // Handle other errors
+                throw error;
+            }
+        })
+        .then(() => {
+            console.log('Log entry sent successfully');
+        })
+        .catch((error) => {
+            console.error('Error sending log entry:', error);
+            // Handle the error appropriately (e.g., retry, log, notify)
+        });
 }
 
 
