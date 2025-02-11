@@ -58,98 +58,15 @@ function sendToLog(logEntry) {
         'fortunebot-analytics'
     );
 
-    // Check if the table exists before creating it
-    // client.getTableAccessPolicies()
-    //     .then(() => {
-    //         // Table exists, proceed to upsert entity
-    //         return client.upsertEntity(logEntry, 'Replace');
-    //     })
-    //     .catch((error) => {
-    //         // Table does not exist, create it
-    //         if (error.statusCode === 404) {
-    //             return client.createTable()
-    //                 .then(() => client.upsertEntity(logEntry, 'Replace'));
-    //         } else {
-    //             // Handle other errors
-    //             throw error;
-    //         }
-    //     })
-    //     .then(() => {
-    //         console.log('Log entry sent successfully');
-    //     })
-    //     .catch((error) => {
-    //         console.error('Error sending log entry:', error);
-    //         // Handle the error appropriately (e.g., retry, log, notify)
-    //     });
+    console.log(logEntry)
+    client.upsertEntity(logEntry)
+        .then(() => {
+            console.log('Log entry sent successfully');
+        })
+        .catch((error) => {
+            console.error('Error sending log entry:', error);
+        });
 }
-
-
-// function sendToLog(logType, logEntry) {
-
-//     //console.log('Azure Log Analysis Data Collector Function received a request');
-
-//     // required node.js libraries
-//     var https = require('https');
-//     var crypto = require('crypto');
-
-//     // Azure Log Analysis credentials
-//     var workspaceId =  process.env.WORKSPACE_ID; // 'xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
-//     var sharedKey = process.env.SHARED_KEY; // 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
-
-//     var apiVersion = '2016-04-01';
-//     var processingDate = new Date().toUTCString();
-
-//     var data = JSON.stringify(logEntry);
-
-//     var contentLength = Buffer.byteLength(data, 'utf8');
-
-//     var stringToSign = 'POST\n' + contentLength + '\napplication/json\nx-ms-date:' + processingDate + '\n/api/logs';
-//     var signature = crypto.createHmac('sha256', new Buffer(sharedKey, 'base64')).update(stringToSign, 'utf-8').digest('base64');
-//     var authorization = 'SharedKey ' + workspaceId + ':' + signature;
-
-//     var headers = {
-//         "content-type": "application/json",
-//         "Authorization": authorization,
-//         "Log-Type": logType,
-//         "x-ms-date": processingDate
-//     };
-
-//     var options = {
-//         hostname: workspaceId + '.ods.opinsights.azure.com',
-//         port: 443,
-//         path: '/api/logs?api-version=' + apiVersion,
-//         method: 'POST',
-//         headers: headers
-//     };
-
-//     var req = https.request(options, function (res) {
-//         //console.log('STATUS: ' + res.statusCode);
-//         //console.log('HEADERS: ' + JSON.stringify(res.headers));
-//         res.setEncoding('utf8');
-//         res.on('data', function (chunk) {
-//             //console.log('BODY: ' + chunk);
-//         });
-//     });
-
-//     req.on('error', function (e) {
-//         console.log('problem with request: ' + e.message);
-//     });
-
-//     // write data to request body
-//     console.log(data);
-//     req.write(data);
-//     req.end();
-
-//     /*
-//     request.post({ url: url, headers: headers, body: data }, function (error, response, body) {
-
-//         console.log('error:', error);
-//         console.log('statusCode:', response && response.statusCode);
-//         console.log('body:', body);
-
-//     });*/
-// };
-
 
 loadFortuneDB();
 
@@ -159,7 +76,6 @@ const Telegraf = require('telegraf')
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
 var util = require('util')
-
 
 bot.use((ctx, next) => {
     const start = new Date()
@@ -218,6 +134,9 @@ bot.use((ctx, next) => {
                 "update sub type": ctx.updateSubTypes,
             }
         }
+
+        my_json["partitionKey"] = ctx.updateType
+        my_json["rowKey"] = "id" + Math.random().toString(16).slice(2)
 
         // sendToLog("fortunebot_request", my_json);
         sendToLog(my_json);
