@@ -20,7 +20,7 @@
 
 console.log("Started script")
 
-const { TableClient } = require('@azure/data-tables');
+//const { TableClient } = require('@azure/data-tables');
 
 console.log("Imported package")
 
@@ -52,20 +52,20 @@ function getFortune() {
 }
 
 function sendToLog(logEntry) {
-    console.log("Entered logEntry")
-    const client = TableClient.fromConnectionString(
-        process.env.ANALYTICS_CONNECTION_STRING,
-        'fortunebot-analytics'
-    );
+    // console.log("Entered logEntry")
+    // const client = TableClient.fromConnectionString(
+    //     process.env.ANALYTICS_CONNECTION_STRING,
+    //     'fortunebot-analytics'
+    // );
 
-    console.log(logEntry)
-    client.upsertEntity(logEntry)
-        .then(() => {
-            console.log('Log entry sent successfully');
-        })
-        .catch((error) => {
-            console.error('Error sending log entry:', error);
-        });
+    // console.log(logEntry)
+    // client.upsertEntity(logEntry)
+    //     .then(() => {
+    //         console.log('Log entry sent successfully');
+    //     })
+    //     .catch((error) => {
+    //         console.error('Error sending log entry:', error);
+    //     });
 }
 
 loadFortuneDB();
@@ -135,8 +135,8 @@ bot.use((ctx, next) => {
             }
         }
 
-        my_json["partitionKey"] = ctx.updateType
-        my_json["rowKey"] = "id" + Math.random().toString(16).slice(2)
+        // my_json["partitionKey"] = ctx.updateType
+        // my_json["rowKey"] = "id" + Math.random().toString(16).slice(2)
 
         // sendToLog("fortunebot_request", my_json);
         sendToLog(my_json);
