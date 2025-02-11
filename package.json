@@ -10,6 +10,9 @@
   "scripts": {
     "start": "node server.js"
   },
+  "engines": {
+    "node": ">=23.7.0"
+  },
   "dependencies": {
     "@azure/cosmos": "^4.2.0",
     "@azure/data-tables": "^13.3.0",
