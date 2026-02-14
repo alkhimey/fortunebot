@@ -17,7 +17,7 @@
     "@azure/cosmos": "^4.2.0",
     "@azure/data-tables": "^13.3.0",
     "@azure/identity": "^4.6.0",
-    "express": "^4.21.2",
+    "express": "^4.22.1",
     "telegraf": "^3.29.0"
   }
 }
