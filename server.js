@@ -22,8 +22,9 @@ console.log("Started script")
 
 const { Telegraf } = require('telegraf')
 const fs = require('fs');
+const path = require('path');
 
-const FORTUNES_DIR = "fortunes/";
+const FORTUNES_DIR = path.join(__dirname, "fortunes");
 const botToken = process.env.BOT_TOKEN;
 
 if (!botToken) {
@@ -42,7 +43,7 @@ function loadFortuneDB() {
 
     var files = fs.readdirSync(FORTUNES_DIR);
     for(var i in files) {
-        var contents = fs.readFileSync(FORTUNES_DIR + files[i], 'utf8')
+        var contents = fs.readFileSync(path.join(FORTUNES_DIR, files[i]), 'utf8')
             .split(/%\r?\n/)
             // .filter(x => x)
         console.log(`Loading ${contents.length} from ${files[i]}`);
