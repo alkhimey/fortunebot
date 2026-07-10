@@ -11,13 +11,9 @@
     "start": "node server.js"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   },
   "dependencies": {
-    "@azure/cosmos": "^4.2.0",
-    "@azure/data-tables": "^13.3.0",
-    "@azure/identity": "^4.6.0",
-    "express": "^4.21.2",
-    "telegraf": "^3.29.0"
+    "telegraf": "^4.16.3"
   }
 }

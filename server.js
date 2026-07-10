@@ -22,10 +22,13 @@ console.log("Started script")
 
 const { Telegraf } = require('telegraf')
 const fs = require('fs');
-const express = require('express')
-const { TableClient } = require('@azure/data-tables');
 
 const FORTUNES_DIR = "fortunes/";
+const botToken = process.env.BOT_TOKEN;
+
+if (!botToken) {
+    throw new Error("BOT_TOKEN environment variable is required");
+}
 
 /**
  * Global vars
@@ -55,35 +58,6 @@ function getFortune() {
     return fortunes[Math.floor(Math.random() * fortunes.length)];
 }
 
-function sendToLog(logEntry) {
-    console.log("Entered logEntry")
-    const client = TableClient.fromConnectionString(
-        process.env.ANALYTICS_CONNECTION_STRING,
-        'fortunebot-analytics'
-    );
-
-    console.log(">1")
-    console.log(logEntry)
-    for (let key in logEntry) {
-        if (logEntry.hasOwnProperty(key)) {
-            logEntry[key] = String(logEntry[key]);
-        }
-    }
-    console.log(">2")
-    console.log(logEntry)
-    console.log(">3")
-
-
-    client.upsertEntity(logEntry)
-        .then(() => {
-            console.log('Log entry sent successfully');
-        })
-        .catch((error) => {
-            console.error('Error sending log entry:', error);
-        });
-}
-
-
 /**
  * Load the fortunes to memory
  */
@@ -91,29 +65,16 @@ loadFortuneDB()
 console.log(`${fortunes.length} fortunes are loaded`)
 
 /**
- * Create simple web service for debugging
- */
-// const app = express()
-// const port = process.env.PORT
-
-// app.get('/', (req, res) => {
-//   res.send(`${fortunes.length} fortunes are loaded`)
-// })
-
-// app.listen(port, () => {
-//   console.log(`Example app listening on port ${port}`)
-// })
-
-
-/**
  * Create the telegram bot
  */
-const bot = new Telegraf(process.env.BOT_TOKEN)
+const bot = new Telegraf(botToken)
 
 bot.use((ctx, next) => {
     return next(ctx).then(() => {
+        let logEntry;
+
         if (ctx.message) {
-            var logEntry = {
+            logEntry = {
                 "updateType": ctx.updateType,
                 "updateSubType": ctx.updateSubTypes,
                 "messageId": ctx.message.message_id,
@@ -130,7 +91,7 @@ bot.use((ctx, next) => {
                 "chatTitle": ctx.message.chat.type === "group" ? ctx.update.message.chat.title : ""
             }
         } else if (ctx.updateType == 'inline_query') {
-            var logEntry = {
+            logEntry = {
                 "updateType": ctx.updateType,
                 "updateSubType": ctx.updateSubTypes,
                 "updateId": ctx.update.update_id,
@@ -143,8 +104,8 @@ bot.use((ctx, next) => {
                 "fromUsername": ctx.update.inline_query.from.username,
                 "fromLanguageCode": ctx.update.inline_query.from.language_code
             }
-        } else if (ctx.updateType == "'chosen_inline_result'") {
-            var logEntry = {
+        } else if (ctx.updateType == "chosen_inline_result") {
+            logEntry = {
                 "updateType": ctx.updateType,
                 "updateSubType": ctx.updateSubTypes,
                 "updateId": ctx.update.update_id,
@@ -158,16 +119,13 @@ bot.use((ctx, next) => {
                 "fromLanguageCode": ctx.update.chosen_inline_result.from.language_code
             }
         } else {
-            var logEntry = {
+            logEntry = {
                 "updateType": ctx.updateType,
                 "updateSubType": ctx.updateSubTypes,
             }
         }
 
-        logEntry["partitionKey"] = ctx.updateType
-        logEntry["rowKey"] = "id" + Math.random().toString(16).slice(2)
-
-        sendToLog(logEntry);
+        console.log(JSON.stringify(logEntry));
     })
 })
 bot.start((ctx) => ctx.reply('Welcome! Send me any /fortune command and I will reply with a random epigram.'))
@@ -188,13 +146,15 @@ bot.on('inline_query', (ctx) => {
     ctx.answerInlineQuery(result, {cache_time: 0})
 })
 
-bot.launch({
-    webhook: {
-      domain: 'https://fortunebot.azurewebsites.net',
-      port: process.env.PORT || 3000
-  }
-})
+if (require.main === module) {
+    bot.launch()
 
-// Enable graceful stop
-process.once('SIGINT', () => bot.stop('SIGINT'))
-process.once('SIGTERM', () => bot.stop('SIGTERM'))
+    // Enable graceful stop
+    process.once('SIGINT', () => bot.stop('SIGINT'))
+    process.once('SIGTERM', () => bot.stop('SIGTERM'))
+}
+
+module.exports = {
+    bot,
+    getFortune,
+}
