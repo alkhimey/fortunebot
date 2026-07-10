@@ -8,7 +8,7 @@ This avoids API Gateway, containers, databases, queues, and always-on servers.
 
 ## Recommended AWS resources
 
-- Lambda runtime: `nodejs22.x` or newer.
+- Lambda runtime: `nodejs24.x`.
 - Lambda architecture: `arm64`, unless a dependency blocks it.
 - Public endpoint: Lambda Function URL with auth type `NONE`.
 - Secret storage:
@@ -29,7 +29,7 @@ This avoids API Gateway, containers, databases, queues, and always-on servers.
 
 ## Deployment steps
 
-1. Create the Lambda function with Node.js 22 or newer.
+1. Create the Lambda function with Node.js 24.
 2. Upload a zip containing `server.js`, the Lambda handler, `package.json`, `package-lock.json`, `node_modules`, and `fortunes/`.
 3. Configure `BOT_TOKEN` as an environment variable, or configure Secrets Manager access and store only a secret name in the environment.
 4. Create a Lambda Function URL with auth type `NONE`.

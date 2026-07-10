@@ -11,7 +11,7 @@
     "start": "node server.js"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.0.0"
   },
   "dependencies": {
     "telegraf": "^4.16.3"
